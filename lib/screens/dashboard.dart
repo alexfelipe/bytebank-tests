@@ -1,53 +1,59 @@
+import 'package:bytebank/database/dao/contact_dao.dart';
 import 'package:bytebank/screens/contacts_list.dart';
 import 'package:bytebank/screens/transactions_list.dart';
+import 'package:bytebank/widgets/contact_services.dart';
 import 'package:flutter/material.dart';
 
 class Dashboard extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Dashboard'),
+    return AppDependencies(
+      contactDao: ContactDao(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Dashboard'),
+        ),
+        body: LayoutBuilder(
+            builder: (context, constraints) => SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Image.asset(
+                            'images/bytebank_logo.png',
+                            key: Key('dashboardImage'),
+                          ),
+                        ),
+                        Container(
+                          height: 120,
+                          child: ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: <Widget>[
+                              FeatureItem(
+                                'Transfer',
+                                Icons.monetization_on,
+                                onClick: () => _showContactsList(context),
+                              ),
+                              FeatureItem(
+                                'Transaction Feed',
+                                Icons.description,
+                                onClick: () => _showTransactionsList(context),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )),
       ),
-      body: LayoutBuilder(
-          builder: (context, constraints) => SingleChildScrollView(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: constraints.maxHeight,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Image.asset(
-                          'images/bytebank_logo.png',
-                          key: Key('dashboardImage'),
-                        ),
-                      ),
-                      Container(
-                        height: 120,
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: <Widget>[
-                            FeatureItem(
-                              'Transfer',
-                              Icons.monetization_on,
-                              onClick: () => _showContactsList(context),
-                            ),
-                            FeatureItem(
-                              'Transaction Feed',
-                              Icons.description,
-                              onClick: () => _showTransactionsList(context),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              )),
     );
   }
 
