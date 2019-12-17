@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:bytebank/main.dart';
+import 'package:bytebank/screens/contacts_list.dart';
 import 'package:bytebank/screens/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -26,11 +29,12 @@ void main() {
     );
 
     final transferFeature = find.byWidgetPredicate(
-      (widget) => featureItemMatcher(
-        widget,
-        'Transfer',
-        Icons.monetization_on,
-      ),
+          (widget) =>
+          featureItemMatcher(
+            widget,
+            'Transfer',
+            Icons.monetization_on,
+          ),
     );
     expect(transferFeature, findsOneWidget);
     await tester.tap(transferFeature);
@@ -40,37 +44,40 @@ void main() {
       any,
     ));
 
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     verify(mockContactDao.findAll());
 
     final fabNewContact = find.widgetWithIcon(FloatingActionButton, Icons.add);
     expect(fabNewContact, findsOneWidget);
     await tester.tap(fabNewContact);
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     final nameTextField = find
         .byWidgetPredicate((widget) => textFieldMatcher(widget, 'Full name'));
     expect(nameTextField, findsOneWidget);
     await tester.enterText(nameTextField, 'Alex');
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     final accountNumberTextField = find.byWidgetPredicate(
-        (widget) => textFieldMatcher(widget, 'Account number'));
+            (widget) => textFieldMatcher(widget, 'Account number'));
     expect(accountNumberTextField, findsOneWidget);
     await tester.enterText(accountNumberTextField, '1000');
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     final createButton = find.widgetWithText(RaisedButton, 'Create');
     expect(createButton, findsOneWidget);
     await tester.tap(createButton);
-    await tester.pump();
 
-    verify(mockContactDao.save);
+    when(mockContactDao.save(any)).thenAnswer((_) async => 1);
+
+    verify(mockContactDao.save(any));
 
     verify(mockNavigator.didPop(
       any,
       any,
     ));
+
+    await tester.pumpAndSettle();
   });
 }
