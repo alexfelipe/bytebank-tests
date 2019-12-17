@@ -1,4 +1,5 @@
 import 'package:bytebank/models/contact.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:bytebank/database/app_database.dart';
 
@@ -20,6 +21,7 @@ class ContactDao {
   }
 
   Future<List<Contact>> findAll() async {
+    debugPrint('findAll was called');
     final Database db = await getDatabase();
     final List<Map<String, dynamic>> result = await db.query(_tableName);
     List<Contact> contacts = _toList(result);

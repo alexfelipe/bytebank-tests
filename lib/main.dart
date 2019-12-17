@@ -5,15 +5,29 @@ import 'package:bytebank/widgets/contact_services.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(BytebankApp());
+  runApp(BytebankApp(
+    contactDao: ContactDao(),
+    webClient: TransactionWebClient(),
+    home: Dashboard(),
+  ));
 }
 
 class BytebankApp extends StatelessWidget {
+  final ContactDao contactDao;
+  final TransactionWebClient webClient;
+  final Widget home;
+
+  BytebankApp({
+    @required this.contactDao,
+    @required this.webClient,
+    @required this.home,
+  });
+
   @override
   Widget build(BuildContext context) {
     return AppDependencies(
-      contactDao: ContactDao(),
-      transactionWebClient: TransactionWebClient(),
+      contactDao: contactDao,
+      transactionWebClient: webClient,
       child: MaterialApp(
         theme: ThemeData(
           primaryColor: Colors.green[900],
@@ -23,7 +37,7 @@ class BytebankApp extends StatelessWidget {
             textTheme: ButtonTextTheme.primary,
           ),
         ),
-        home: Dashboard(),
+        home: home,
       ),
     );
   }

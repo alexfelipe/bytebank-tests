@@ -1,5 +1,6 @@
 import 'package:bytebank/database/dao/contact_dao.dart';
 import 'package:bytebank/models/contact.dart';
+import 'package:bytebank/widgets/contact_services.dart';
 import 'package:flutter/material.dart';
 
 class
@@ -15,7 +16,7 @@ class _ContactFormState extends State<ContactForm> {
 
   @override
   Widget build(BuildContext context) {
-
+    final dependencies = AppDependencies.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('New contact'),
@@ -57,7 +58,7 @@ class _ContactFormState extends State<ContactForm> {
                     final int accountNumber =
                         int.tryParse(_accountNumberController.text);
                     final Contact newContact = Contact(0, name, accountNumber);
-                    _dao.save(newContact).then((id) => Navigator.pop(context));
+                    dependencies.contactDao.save(newContact).then((id) => Navigator.pop(context));
                   },
                 ),
               ),
