@@ -10,6 +10,12 @@ import 'package:bytebank/widgets/contact_services.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
+const Key transactionFormContactNameKey = Key('transactionFormContactName');
+const Key transactionFormContactAccountNumberKey =
+    Key('transactionFormContactAccountNumber');
+const Key transactionFormValueFieldKey = Key('transactionFormValueField');
+const Key transactionFormTransferButtonKey = Key('transactionFormTransferButton');
+
 class TransactionForm extends StatefulWidget {
   final Contact contact;
 
@@ -48,6 +54,7 @@ class _TransactionFormState extends State<TransactionForm> {
               ),
               Text(
                 widget.contact.name,
+                key: transactionFormContactNameKey,
                 style: TextStyle(
                   fontSize: 24.0,
                 ),
@@ -56,6 +63,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 padding: const EdgeInsets.only(top: 16.0),
                 child: Text(
                   widget.contact.accountNumber.toString(),
+                  key: transactionFormContactAccountNumberKey,
                   style: TextStyle(
                     fontSize: 32.0,
                     fontWeight: FontWeight.bold,
@@ -65,6 +73,7 @@ class _TransactionFormState extends State<TransactionForm> {
               Padding(
                 padding: const EdgeInsets.only(top: 16.0),
                 child: TextField(
+                  key: transactionFormValueFieldKey,
                   controller: _valueController,
                   style: TextStyle(fontSize: 24.0),
                   decoration: InputDecoration(labelText: 'Value'),
@@ -76,6 +85,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 child: SizedBox(
                   width: double.maxFinite,
                   child: RaisedButton(
+                    key: transactionFormTransferButtonKey,
                     child: Text('Transfer'),
                     onPressed: () {
                       final double value =
