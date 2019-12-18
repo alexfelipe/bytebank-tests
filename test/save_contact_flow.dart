@@ -1,4 +1,5 @@
 import 'package:bytebank/main.dart';
+import 'package:bytebank/screens/contacts_list.dart';
 import 'package:bytebank/screens/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -11,12 +12,11 @@ import 'mocks/webclient.dart';
 
 void main() {
   testWidgets('Should save the new contact', (tester) async {
-    final mockNavigator = MockNavigatorObserver();
     final mockContactDao = MockContactDao();
     final mockWebClient = MockTransactionWebClient();
+
     await tester.pumpWidget(
       MaterialApp(
-        navigatorObservers: [mockNavigator],
         home: BytebankApp(
           contactDao: mockContactDao,
           webClient: mockWebClient,
@@ -34,11 +34,6 @@ void main() {
     );
     expect(transferFeature, findsOneWidget);
     await tester.tap(transferFeature);
-
-    verify(mockNavigator.didPush(
-      any,
-      any,
-    ));
 
     await tester.pumpAndSettle();
 
@@ -70,13 +65,9 @@ void main() {
 
     verify(mockContactDao.save(any));
 
-//    tava debugando aqui, e o materialApp que tá se livrando do mock observer, estranho... bom pode deixar sem essa validação, mas também tem outros jeitos de validar que deu o pop
-//    verificar que elementos na tela sumiram (textos ou ícones)
-//    ou verificar que elementos da tela anterior apareceram
-//
-//    verify(mockNavigator.didPop(
-//      any,
-//      any,
-//    ));
+    await tester.pumpAndSettle();
+
+    final contactsList = find.byType(ContactsList);
+    expect(contactsList, findsOneWidget);
   });
 }

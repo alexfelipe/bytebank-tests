@@ -1,8 +1,8 @@
-import 'package:bytebank/database/dao/contact_dao.dart';
 import 'package:bytebank/screens/contacts_list.dart';
 import 'package:bytebank/screens/transactions_list.dart';
-import 'package:bytebank/widgets/contact_services.dart';
 import 'package:flutter/material.dart';
+
+const Key dashboardMainImageKey = Key('dashboardImage');
 
 class Dashboard extends StatelessWidget {
 
@@ -26,7 +26,7 @@ class Dashboard extends StatelessWidget {
                         padding: const EdgeInsets.all(8.0),
                         child: Image.asset(
                           'images/bytebank_logo.png',
-                          key: Key('dashboardImage'),
+                          key: dashboardMainImageKey,
                         ),
                       ),
                       Container(
