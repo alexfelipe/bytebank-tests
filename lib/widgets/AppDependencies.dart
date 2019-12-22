@@ -10,6 +10,10 @@ class AppDependencies extends InheritedWidget {
     @required Widget child,
   }) : super(child: child);
 
+  static AppDependencies of(BuildContext context) {
+    return context.inheritFromWidgetOfExactType(AppDependencies);
+  }
+
   @override
   bool updateShouldNotify(AppDependencies oldWidget) {
     return contactDao != oldWidget.contactDao;

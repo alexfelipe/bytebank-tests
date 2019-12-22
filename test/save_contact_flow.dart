@@ -23,8 +23,7 @@ void main() {
 
     expect(transferFeature, findsOneWidget);
     await tester.tap(transferFeature);
-    await tester.pump();
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     final contactsList = find.byType(ContactsList);
     expect(contactsList, findsOneWidget);
@@ -32,10 +31,31 @@ void main() {
     final fabNewContact = find.widgetWithIcon(FloatingActionButton, Icons.add);
     expect(fabNewContact, findsOneWidget);
     await tester.tap(fabNewContact);
-    await tester.pump();
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     final contactForm = find.byType(ContactForm);
     expect(contactForm, findsOneWidget);
+
+    final nameField = find.byWidgetPredicate((widget) {
+      if(widget is TextField) {
+        return widget.decoration.labelText == 'Full name';
+      }
+      return false;
+    });
+    expect(nameField, findsOneWidget);
+    await tester.enterText(nameField, 'Alex');
+
+    final accountNumberField = find.byWidgetPredicate((widget) {
+      if(widget is TextField) {
+        return widget.decoration.labelText == 'Account number';
+      }
+      return false;
+    });
+    expect(accountNumberField, findsOneWidget);
+    await tester.enterText(accountNumberField, '1000');
+
+    final createButton = find.widgetWithText(RaisedButton, 'Create');
+    expect(createButton, findsOneWidget);
+    await tester.tap(createButton);
   });
 }
