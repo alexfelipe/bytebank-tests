@@ -24,4 +24,20 @@ class Contact {
         'name': name,
         'accountNumber': accountNumber,
       };
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is Contact &&
+              runtimeType == other.runtimeType &&
+              id == other.id &&
+              name == other.name &&
+              accountNumber == other.accountNumber;
+
+  @override
+  int get hashCode =>
+      id.hashCode ^
+      name.hashCode ^
+      accountNumber.hashCode;
+
 }

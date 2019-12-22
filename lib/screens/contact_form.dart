@@ -57,7 +57,10 @@ class _ContactFormState extends State<ContactForm> {
                     final int accountNumber =
                         int.tryParse(_accountNumberController.text);
                     final Contact newContact = Contact(0, name, accountNumber);
-                    dependencies.contactDao.save(newContact).then((id) => Navigator.pop(context));
+                    _save(
+                      dependencies.contactDao,
+                      newContact,
+                    );
                   },
                 ),
               ),
@@ -66,5 +69,13 @@ class _ContactFormState extends State<ContactForm> {
         ),
       ),
     );
+  }
+
+  void _save(
+    ContactDao dao,
+    Contact contact,
+  ) async {
+    await dao.save(contact);
+    Navigator.pop(context);
   }
 }
