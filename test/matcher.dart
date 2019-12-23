@@ -1,7 +1,8 @@
+import 'package:bytebank/screens/contacts_list.dart';
 import 'package:bytebank/screens/dashboard.dart';
 import 'package:flutter/material.dart';
 
-bool featureItemWithTextAndIconMatcher(
+bool featureItemMatcher(
     Widget widget,
     String name,
     IconData icon,
@@ -12,3 +13,21 @@ bool featureItemWithTextAndIconMatcher(
   return false;
 }
 
+bool contactFormTextFieldMatcher(Widget widget, String labelText) {
+  if (widget is TextField) {
+    return widget.decoration.labelText == labelText;
+  }
+  return false;
+}
+
+bool contactItemMatcher(
+    Widget widget,
+    String name,
+    int accountNumber,
+    ) {
+  if (widget is ContactItem) {
+    final contact = widget.contact;
+    return contact.name == name && contact.accountNumber == accountNumber;
+  }
+  return false;
+}

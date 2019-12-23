@@ -19,7 +19,7 @@ void main() {
         MaterialApp(home: Dashboard()),
       );
       final transferFeature = find.byWidgetPredicate(
-          (Widget widget) => featureItemWithTextAndIconMatcher(
+          (Widget widget) => featureItemMatcher(
                 widget,
                 'Transfer',
                 Icons.monetization_on,
@@ -31,7 +31,7 @@ void main() {
         MaterialApp(home: Dashboard()),
       );
       final transferFeature = find.byWidgetPredicate(
-          (Widget widget) => featureItemWithTextAndIconMatcher(
+          (Widget widget) => featureItemMatcher(
                 widget,
                 'Transaction Feed',
                 Icons.description,

@@ -20,13 +20,7 @@ void main() {
     final dashboard = find.byType(Dashboard);
     expect(dashboard, findsOneWidget);
 
-    final transferFeature = find.byWidgetPredicate(
-      (widget) => featureItemWithTextAndIconMatcher(
-          widget, 'Transfer', Icons.monetization_on),
-    );
-
-    expect(transferFeature, findsOneWidget);
-    await tester.tap(transferFeature);
+    await _clickOnTheTransferFeature(tester);
     await tester.pumpAndSettle();
 
     final contactsList = find.byType(ContactsList);
@@ -34,42 +28,32 @@ void main() {
 
     verify(mockContactDao.findAll());
 
-    final fabNewContact = find.widgetWithIcon(FloatingActionButton, Icons.add);
-    expect(fabNewContact, findsOneWidget);
-    await tester.tap(fabNewContact);
+    await _clickOnTheFabNewContact(tester);
     await tester.pumpAndSettle();
 
     final contactForm = find.byType(ContactForm);
     expect(contactForm, findsOneWidget);
 
-    final nameField = find.byWidgetPredicate((widget) {
-      if (widget is TextField) {
-        return widget.decoration.labelText == 'Full name';
-      }
-      return false;
-    });
-    expect(nameField, findsOneWidget);
-    await tester.enterText(nameField, 'Alex');
+    await _fillTheTextFieldWithLabelText(
+      tester,
+      text: 'Alex',
+      labelText: 'Full name',
+    );
 
-    final accountNumberField = find.byWidgetPredicate((widget) {
-      if (widget is TextField) {
-        return widget.decoration.labelText == 'Account number';
-      }
-      return false;
-    });
-    expect(accountNumberField, findsOneWidget);
-    await tester.enterText(accountNumberField, '1000');
+    await _fillTheTextFieldWithLabelText(
+      tester,
+      text: '1000',
+      labelText: 'Account number',
+    );
 
-    final createButton = find.widgetWithText(RaisedButton, 'Create');
-    expect(createButton, findsOneWidget);
-
-//    when(mockContactDao.save(any)).thenAnswer((_) async => 0);
+    //if the save call use `then` instead of async await
+    //when(mockContactDao.save(any)).thenAnswer((_) async => 0);
 
     final newContact = Contact(0, 'Alex', 1000);
 
     when(mockContactDao.findAll()).thenAnswer((_) async => [newContact]);
 
-    await tester.tap(createButton);
+    await _clickOnCreateButton(tester);
     await tester.pumpAndSettle();
 
     verify(mockContactDao.save(newContact));
@@ -80,12 +64,41 @@ void main() {
     verify(mockContactDao.findAll());
 
     final newContactItem = find.byWidgetPredicate((widget) {
-      if(widget is ContactItem){
-        final contact = widget.contact;
-        return contact.name == 'Alex' && contact.accountNumber == 1000;
-      }
-      return false;
+      return contactItemMatcher(widget, 'Alex', 1000);
     });
     expect(newContactItem, findsOneWidget);
   });
+}
+
+Future _clickOnCreateButton(WidgetTester tester) async {
+  final createButton = find.widgetWithText(RaisedButton, 'Create');
+  expect(createButton, findsOneWidget);
+  await tester.tap(createButton);
+}
+
+Future _fillTheTextFieldWithLabelText(
+  WidgetTester tester, {
+  @required String text,
+  @required String labelText,
+}) async {
+  final textField = find.byWidgetPredicate((widget) {
+    return contactFormTextFieldMatcher(widget, labelText);
+  });
+  expect(textField, findsOneWidget);
+  await tester.enterText(textField, text);
+}
+
+Future _clickOnTheFabNewContact(WidgetTester tester) async {
+  final fabNewContact = find.widgetWithIcon(FloatingActionButton, Icons.add);
+  expect(fabNewContact, findsOneWidget);
+  await tester.tap(fabNewContact);
+}
+
+Future _clickOnTheTransferFeature(WidgetTester tester) async {
+  final transferFeature = find.byWidgetPredicate(
+    (widget) => featureItemMatcher(widget, 'Transfer', Icons.monetization_on),
+  );
+
+  expect(transferFeature, findsOneWidget);
+  await tester.tap(transferFeature);
 }
