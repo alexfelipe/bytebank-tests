@@ -6,8 +6,15 @@ import 'package:bytebank/components/transaction_auth_dialog.dart';
 import 'package:bytebank/http/webclients/transaction_webclient.dart';
 import 'package:bytebank/models/contact.dart';
 import 'package:bytebank/models/transaction.dart';
+import 'package:bytebank/widgets/contact_services.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
+
+const Key transactionFormContactNameKey = Key('transactionFormContactName');
+const Key transactionFormContactAccountNumberKey =
+    Key('transactionFormContactAccountNumber');
+const Key transactionFormValueFieldKey = Key('transactionFormValueField');
+const Key transactionFormTransferButtonKey = Key('transactionFormTransferButton');
 
 class TransactionForm extends StatefulWidget {
   final Contact contact;
@@ -20,12 +27,12 @@ class TransactionForm extends StatefulWidget {
 
 class _TransactionFormState extends State<TransactionForm> {
   final TextEditingController _valueController = TextEditingController();
-  final TransactionWebClient _webClient = TransactionWebClient();
   final String transactionId = Uuid().v4();
   bool _sending = false;
 
   @override
   Widget build(BuildContext context) {
+    final dependencies = AppDependencies.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('New transaction'),
@@ -47,6 +54,7 @@ class _TransactionFormState extends State<TransactionForm> {
               ),
               Text(
                 widget.contact.name,
+                key: transactionFormContactNameKey,
                 style: TextStyle(
                   fontSize: 24.0,
                 ),
@@ -55,6 +63,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 padding: const EdgeInsets.only(top: 16.0),
                 child: Text(
                   widget.contact.accountNumber.toString(),
+                  key: transactionFormContactAccountNumberKey,
                   style: TextStyle(
                     fontSize: 32.0,
                     fontWeight: FontWeight.bold,
@@ -64,6 +73,7 @@ class _TransactionFormState extends State<TransactionForm> {
               Padding(
                 padding: const EdgeInsets.only(top: 16.0),
                 child: TextField(
+                  key: transactionFormValueFieldKey,
                   controller: _valueController,
                   style: TextStyle(fontSize: 24.0),
                   decoration: InputDecoration(labelText: 'Value'),
@@ -75,6 +85,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 child: SizedBox(
                   width: double.maxFinite,
                   child: RaisedButton(
+                    key: transactionFormTransferButtonKey,
                     child: Text('Transfer'),
                     onPressed: () {
                       final double value =
@@ -89,7 +100,12 @@ class _TransactionFormState extends State<TransactionForm> {
                           builder: (contextDialog) {
                             return TransactionAuthDialog(
                               onConfirm: (String password) {
-                                _save(transactionCreated, password, context);
+                                _save(
+                                  dependencies.transactionWebClient,
+                                  transactionCreated,
+                                  password,
+                                  context,
+                                );
                               },
                             );
                           });
@@ -105,11 +121,13 @@ class _TransactionFormState extends State<TransactionForm> {
   }
 
   void _save(
+    TransactionWebClient webClient,
     Transaction transactionCreated,
     String password,
     BuildContext context,
   ) async {
     Transaction transaction = await _send(
+      webClient,
       transactionCreated,
       password,
       context,
@@ -129,13 +147,16 @@ class _TransactionFormState extends State<TransactionForm> {
     }
   }
 
-  Future<Transaction> _send(Transaction transactionCreated, String password,
+  Future<Transaction> _send(
+      TransactionWebClient webClient,
+      Transaction transactionCreated,
+      String password,
       BuildContext context) async {
     setState(() {
       _sending = true;
     });
     final Transaction transaction =
-        await _webClient.save(transactionCreated, password).catchError((e) {
+        await webClient.save(transactionCreated, password).catchError((e) {
       _showFailureMessage(context, message: e.message);
     }, test: (e) => e is HttpException).catchError((e) {
       _showFailureMessage(context,
